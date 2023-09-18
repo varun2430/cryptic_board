@@ -1,6 +1,23 @@
+import { useEffect, useState } from "react";
 import Reply from "./Reply";
+import axios from "axios";
 
 const Post = (props) => {
+  const [file, setFile] = useState(null);
+
+  const getFile = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/file/${id}`);
+      setFile(response.data[0]);
+    } catch (error) {
+      console.error("Error fetching file:", error);
+    }
+  };
+
+  useEffect(() => {
+    getFile(props.id);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <div className=" flex flex-col items-center justify-center rounded bg-slate-800 h-full m-2">
       <div className=" flex flex-row justify-between px-2 pt-1 w-full">
@@ -12,11 +29,13 @@ const Post = (props) => {
       <div className=" flex items-center justify-start px-2 pb-1 w-full">
         <p className=" text-lg font-bold text-white">{props.subject}</p>
       </div>
-      <img
-        src={props.image}
-        alt="post img"
-        className=" h-48 md:h-64 w-full object-contain px-1 "
-      />
+      {file && (
+        <img
+          src={`data:${file.contentType};base64, ${file.data}`}
+          alt="post img"
+          className=" h-48 md:h-64 w-full object-contain px-1 "
+        />
+      )}
       <div className=" flex items-center justify-center text-justify p-1">
         <p className=" text-md text-white">{props.description}</p>
       </div>
