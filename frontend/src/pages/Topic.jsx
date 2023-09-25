@@ -10,7 +10,7 @@ const Topic = () => {
 
   const getPosts = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/");
+      const response = await axios.get("http://localhost:5000/api/post/");
       setPosts(response.data);
     } catch (error) {
       console.error("Error fetching posts:", error);
@@ -29,11 +29,15 @@ const Topic = () => {
     formData.append("file", file);
 
     try {
-      const response = await axios.post("http://localhost:5000/", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:5000/api/post/",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
     } catch (error) {
       console.error("Error uploading file:", error);
     }
@@ -127,16 +131,15 @@ const Topic = () => {
             {posts === null ? (
               <></>
             ) : (
-              posts.map(
-                ({ _id, subject, description, imgContentType, imgData }) => (
-                  <Post
-                    key={_id}
-                    id={_id}
-                    subject={subject}
-                    description={description}
-                  />
-                )
-              )
+              posts.map(({ _id, subject, description, objectKey }) => (
+                <Post
+                  key={_id}
+                  id={_id}
+                  subject={subject}
+                  description={description}
+                  objectKey={objectKey}
+                />
+              ))
             )}
           </div>
         </div>

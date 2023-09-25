@@ -1,10 +1,12 @@
 import express from "express";
+import { S3Client } from "@aws-sdk/client-s3";
 import mongoose from "mongoose";
-import multer from "multer";
-import cors from "cors";
 import dotenv from "dotenv";
-import Post from "./models/Post.js";
-import File from "./models/File.js";
+import cors from "cors";
+import multer from "multer";
+import postRoutes from "./routes/posts.js";
+import fileRoutes from "./routes/files.js";
+import { sendPost } from "./controllers/posts.js";
 
 dotenv.config();
 
@@ -13,52 +15,28 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: {
-    fieldSize: 50 * 1024 * 1024,
-    fileSize: 50 * 1024 * 1024,
+export const s3Client = new S3Client({
+  region: process.env.AWS_REGION,
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_KEY,
   },
 });
 
-const getPosts = async (req, res) => {
-  const response = await Post.find({});
-  res.json(response);
-};
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fieldSize: 10 * 1024 * 1024,
+    fileSize: 10 * 1024 * 1024,
+  },
+});
 
-const getFile = async (req, res) => {
-  const { id } = req.params;
-  const response = await File.find({ parentId: id });
-  res.json(response);
-};
+/* ROUTES WITH FILES */
+app.post("/api/post", upload.single("file"), sendPost);
 
-const sendPost = async (req, res) => {
-  const { subject, description } = req.body;
-  const fileName = req.file.originalname;
-  const contentType = req.file.mimetype;
-  const data = req.file.buffer.toString("base64");
-
-  const newPost = new Post({
-    subject,
-    description,
-  });
-  const savedPost = await newPost.save();
-
-  const parentId = savedPost._id;
-  const newFile = new File({
-    parentId,
-    fileName,
-    contentType,
-    data,
-  });
-  const savedFile = await newFile.save();
-
-  res.json(savedPost);
-};
-
-app.get("/", getPosts);
-app.get("/file/:id", getFile);
-app.post("/", upload.single("file"), sendPost);
+/* ROUTES */
+app.use("/api/post", postRoutes);
+app.use("/api/file", fileRoutes);
 
 mongoose
   .connect(process.env.MONGO_URL)

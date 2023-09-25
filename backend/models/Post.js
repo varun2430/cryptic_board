@@ -11,15 +11,15 @@ const postSchema = Schema(
     description: {
       type: String,
     },
-    // imgFileName: {
-    //   type: String,
-    // },
-    // imgContentType: {
-    //   type: String,
-    // },
-    // imgData: {
-    //   type: String,
-    // },
+    objectKey: {
+      type: String,
+    },
+    fileName: {
+      type: String,
+    },
+    contentType: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

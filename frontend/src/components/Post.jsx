@@ -3,19 +3,21 @@ import Reply from "./Reply";
 import axios from "axios";
 
 const Post = (props) => {
-  const [file, setFile] = useState(null);
+  const [objectUrl, setObjectUrl] = useState(null);
 
-  const getFile = async (id) => {
+  const getObjectUrl = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/file/${id}`);
-      setFile(response.data[0]);
+      const response = await axios.get(
+        `http://localhost:5000/api/file/${props.objectKey}`
+      );
+      setObjectUrl(response.data.url);
     } catch (error) {
       console.error("Error fetching file:", error);
     }
   };
 
   useEffect(() => {
-    getFile(props.id);
+    getObjectUrl();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -29,9 +31,10 @@ const Post = (props) => {
       <div className=" flex items-center justify-start px-2 pb-1 w-full">
         <p className=" text-lg font-bold text-white">{props.subject}</p>
       </div>
-      {file && (
+      {objectUrl && (
         <img
-          src={`data:${file.contentType};base64, ${file.data}`}
+          // src={`data:${file.contentType};base64, ${file.data}`}
+          src={`${objectUrl}`}
           alt="post img"
           className=" h-48 md:h-64 w-full object-contain px-1 "
         />
