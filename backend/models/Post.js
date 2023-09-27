@@ -2,23 +2,17 @@ import { Schema, model } from "mongoose";
 
 const postSchema = Schema(
   {
-    // topic: {
-    //   type: String,
-    // },
+    topic: {
+      type: String,
+    },
     subject: {
       type: String,
     },
     description: {
       type: String,
     },
-    objectKey: {
-      type: String,
-    },
-    fileName: {
-      type: String,
-    },
-    contentType: {
-      type: String,
+    replyCount: {
+      type: Number,
     },
   },
   { timestamps: true }

@@ -1,7 +1,55 @@
+import { useState, useEffect } from "react";
+import { getPosts } from "../services/postService";
 import HomeTopic from "../components/HomeTopic";
 import HomePost from "../components/HomePost";
 
+const topics = [
+  "Anime & Manga",
+  "Video Games",
+  "TV Shows & Movies",
+  "Books & Literature",
+  "Music & Bands",
+  "Travel & Adventure",
+  "Food & Cooking",
+  "Fitness & Health",
+  "Technology & Gadgets",
+  "Science & Space",
+  "History",
+  "Pets & Animals",
+  "Self-Improvement",
+  "Cryptocurrency & Finance",
+  "Memes",
+  "Conspiracy Theories",
+  "Sports & Athletics",
+  "Gardening",
+  "Hobbies & Collectibles",
+  "Educational Resources",
+  "Photography",
+  "Programming",
+  "Automobile",
+  "True Crime",
+  "Fandoms",
+  "Science Fiction",
+  "Paranormal & Supernatural",
+  "Crafting & DIY",
+];
+
 const Home = () => {
+  const [homePosts, sethomePosts] = useState([]);
+
+  const getHomePosts = async () => {
+    try {
+      const resData = await getPosts();
+      sethomePosts(resData);
+    } catch (error) {
+      console.error("Error fetching popular posts:", error);
+    }
+  };
+
+  useEffect(() => {
+    getHomePosts();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <>
       <div className=" flex flex-col items-center justify-center lg:mx-24 mx-2">
@@ -15,26 +63,10 @@ const Home = () => {
             <div className="flex items-center justify-start bg-red-500">
               <p className=" text-xl font-bold px-2 py-1">Topics</p>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 px-2 pt-1 pb-2">
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
-              <HomeTopic topic="topic" />
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 px-2 pt-1 pb-1">
+              {topics.map((topic, index) => (
+                <HomeTopic key={index} topic={topic} />
+              ))}
             </div>
           </div>
         </div>
@@ -44,26 +76,9 @@ const Home = () => {
               <p className=" text-xl font-bold px-2 py-1">Popular Posts</p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 place-items-center gap-4 p-2">
-              <HomePost
-                topic="topic"
-                image="fhd.jpg"
-                subject="sdkfjd aksdflk djaslf aksdjfla lasdfjlf alkdflakdf lkadjfj kjdslf"
-              />
-              <HomePost topic="topic" image="hd.jpg" subject="sdkfjd kjdslf" />
-              <HomePost topic="topic" image="hd.jpg" subject="sdkfjd kjdslf" />
-              <HomePost topic="topic" image="fhd.jpg" subject="sdkfjd kjdslf" />
-              <HomePost topic="topic" image="fhd.jpg" subject="sdkfjd kjdslf" />
-              <HomePost topic="topic" image="hd.jpg" subject="sdkfjd kjdslf" />
-              <HomePost topic="topic" image="hd.jpg" subject="sdkfjd kjdslf" />
-              <HomePost topic="topic" image="fhd.jpg" subject="sdkfjd kjdslf" />
-              <HomePost topic="topic" image="fhd.jpg" subject="sdkfjd kjdslf" />
-              <HomePost topic="topic" image="hd.jpg" subject="sdkfjd kjdslf" />
-              <HomePost topic="topic" image="hd.jpg" subject="sdkfjd kjdslf" />
-              <HomePost topic="topic" image="fhd.jpg" subject="sdkfjd kjdslf" />
-              <HomePost topic="topic" image="fhd.jpg" subject="sdkfjd kjdslf" />
-              <HomePost topic="topic" image="hd.jpg" subject="sdkfjd kjdslf" />
-              <HomePost topic="topic" image="hd.jpg" subject="sdkfjd kjdslf" />
-              <HomePost topic="topic" image="fhd.jpg" subject="sdkfjd kjdslf" />
+              {homePosts.map(({ _id, topic, subject }) => (
+                <HomePost key={_id} id={_id} topic={topic} subject={subject} />
+              ))}
             </div>
           </div>
         </div>
@@ -77,7 +92,7 @@ const Home = () => {
                 <p className=" text-md text-white">Posts: 111</p>
               </div>
               <div className=" flex items-center justify-center text-center p-1">
-                <p className=" text-md text-white">Visitors: 212</p>
+                <p className=" text-md text-white">Replies: 212</p>
               </div>
               <div className=" flex items-center justify-center text-center p-1">
                 <p className=" text-md text-white">Content: 64 MB</p>

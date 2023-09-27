@@ -1,8 +1,8 @@
 import express from "express";
-import { getPosts } from "../controllers/posts.js";
+import { getObjectUrl } from "../controllers/file.js";
 
 const router = express.Router();
 
-router.get("/", getPosts);
+router.get("/:id", getObjectUrl);
 
 export default router;

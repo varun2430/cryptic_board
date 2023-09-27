@@ -1,56 +1,44 @@
-import axios from "axios";
-import Post from "../components/Post";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { getPosts, uploadPost } from "../services/postService.js";
+import Post from "../components/Post.jsx";
 
 const Topic = () => {
-  const [posts, setPosts] = useState(null);
+  const { topic } = useParams();
+  const [posts, setPosts] = useState([]);
   const [subject, setSubject] = useState("");
   const [description, setDescription] = useState("");
   const [file, setFile] = useState("");
 
-  const getPosts = async () => {
+  const getTopicPosts = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/post/");
-      setPosts(response.data);
+      const resData = await getPosts(topic);
+      setPosts(resData);
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
   };
 
-  const handleFileChange = async (event) => {
-    setFile(event.target.files[0]);
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const formData = new FormData();
-    formData.append("subject", subject);
-    formData.append("description", description);
-    formData.append("file", file);
-
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/post/",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const resData = await uploadPost(topic, subject, description, file);
+      setPosts([...posts, resData]);
     } catch (error) {
       console.error("Error uploading file:", error);
     }
   };
 
   useEffect(() => {
-    getPosts();
+    getTopicPosts();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className=" flex flex-col items-center justify-center lg:mx-24 mx-2">
       <div className=" flex items-center justify-center h-32 md:w-5/6 w-full bg-gray-600 mt-2 mb-1">
-        <p className=" text-5xl md:text-6xl font-bold text-white">/topic</p>
+        <p className=" text-4xl md:text-5xl lg:text-6xl font-bold text-white px-2">
+          {`/${topic.replace(/_/g, " ")}`}
+        </p>
       </div>
       <div className=" md:w-5/6 w-full bg-gray-600 my-1">
         <div className=" flex flex-col justify-center w-full">
@@ -59,7 +47,7 @@ const Topic = () => {
           </div>
           <div className=" w-full">
             <form className=" px-4 pt-2 pb-2">
-              <div className="mb-3">
+              <div className="mb-2">
                 <label
                   className="block text-white text-sm font-bold mb-1"
                   htmlFor="subject"
@@ -77,7 +65,7 @@ const Topic = () => {
                   }}
                 />
               </div>
-              <div className="mb-3">
+              <div className="mb-2">
                 <label
                   className="block text-white text-sm font-bold mb-1"
                   htmlFor="description"
@@ -87,36 +75,40 @@ const Topic = () => {
                 <textarea
                   id="description"
                   name="description"
-                  className="border rounded w-full py-1 px-3 bg-grey-200 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-24"
+                  className="border rounded w-full py-1 px-3 bg-grey-200 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-12"
                   placeholder="Enter description"
                   onChange={(e) => {
                     setDescription(e.target.value);
                   }}
                 />
               </div>
-              <div className="mb-4">
+              <div className="mb-2">
                 <label
                   className="block text-white text-sm font-bold mb-1"
                   htmlFor="file"
                 >
                   File (Image or GIF)
                 </label>
-                <input
-                  type="file"
-                  id="file"
-                  name="file"
-                  accept=".jpg, .jpeg, .png, .gif"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
-                  onChange={handleFileChange}
-                />
-              </div>
-              <div className="flex items-center justify-center">
-                <button
-                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  onClick={handleSubmit}
-                >
-                  Post
-                </button>
+                <div className="flex flex-row">
+                  <input
+                    type="file"
+                    id="file"
+                    name="file"
+                    accept=".jpg, .jpeg, .png, .gif"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
+                    onChange={(e) => {
+                      setFile(e.target.files[0]);
+                    }}
+                  />
+                  <div className="flex items-center justify-center pl-1">
+                    <button
+                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold h-11 w-11 rounded focus:outline-none focus:shadow-outline"
+                      onClick={handleSubmit}
+                    >
+                      <i className="fa-solid fa-paper-plane text-white"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
             </form>
           </div>
@@ -128,16 +120,16 @@ const Topic = () => {
             <p className=" text-xl font-bold px-2 py-1">Posts</p>
           </div>
           <div className="flex flex-col">
-            {posts === null ? (
+            {posts.length === 0 ? (
               <></>
             ) : (
-              posts.map(({ _id, subject, description, objectKey }) => (
+              posts.map(({ _id, subject, description, createdAt }) => (
                 <Post
                   key={_id}
                   id={_id}
                   subject={subject}
                   description={description}
-                  objectKey={objectKey}
+                  createdAt={createdAt}
                 />
               ))
             )}

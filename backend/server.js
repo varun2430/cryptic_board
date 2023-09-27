@@ -4,9 +4,10 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import multer from "multer";
-import postRoutes from "./routes/posts.js";
-import fileRoutes from "./routes/files.js";
-import { sendPost } from "./controllers/posts.js";
+import postRoutes from "./routes/post.js";
+import fileRoutes from "./routes/file.js";
+import replyRoutes from "./routes/reply.js";
+import { postPost } from "./controllers/post.js";
 
 dotenv.config();
 
@@ -32,11 +33,12 @@ const upload = multer({
 });
 
 /* ROUTES WITH FILES */
-app.post("/api/post", upload.single("file"), sendPost);
+app.post("/api/post", upload.single("file"), postPost);
 
 /* ROUTES */
 app.use("/api/post", postRoutes);
 app.use("/api/file", fileRoutes);
+app.use("/api/reply", replyRoutes);
 
 mongoose
   .connect(process.env.MONGO_URL)
