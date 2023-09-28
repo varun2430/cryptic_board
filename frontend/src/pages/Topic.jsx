@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { compressFile } from "../services/fileService.js";
 import { getPosts, uploadPost } from "../services/postService.js";
 import Post from "../components/Post.jsx";
 
@@ -35,14 +36,14 @@ const Topic = () => {
 
   return (
     <div className=" flex flex-col items-center justify-center lg:mx-24 mx-2">
-      <div className=" flex items-center justify-center h-32 md:w-5/6 w-full bg-gray-600 mt-2 mb-1">
+      <div className=" flex items-center justify-center h-32 md:w-5/6 w-full bg-zinc-800 mt-2 mb-1">
         <p className=" text-4xl md:text-5xl lg:text-6xl font-bold text-white px-2">
           {`/${topic.replace(/_/g, " ")}`}
         </p>
       </div>
-      <div className=" md:w-5/6 w-full bg-gray-600 my-1">
+      <div className=" md:w-5/6 w-full bg-zinc-800 my-1">
         <div className=" flex flex-col justify-center w-full">
-          <div className="flex items-center justify-start bg-red-500">
+          <div className="flex items-center justify-start bg-green-500">
             <p className=" text-xl font-bold px-2 py-1">New Post</p>
           </div>
           <div className=" w-full">
@@ -96,8 +97,11 @@ const Topic = () => {
                     name="file"
                     accept=".jpg, .jpeg, .png, .gif"
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
-                    onChange={(e) => {
-                      setFile(e.target.files[0]);
+                    onChange={async (e) => {
+                      const compressedFile = await compressFile(
+                        e.target.files[0]
+                      );
+                      setFile(compressedFile);
                     }}
                   />
                   <div className="flex items-center justify-center pl-1">
@@ -114,14 +118,16 @@ const Topic = () => {
           </div>
         </div>
       </div>
-      <div className=" md:w-5/6 w-full bg-gray-600 my-1">
+      <div className=" md:w-5/6 w-full bg-zinc-800 mt-1 mb-2">
         <div className=" flex flex-col justify-center w-full">
-          <div className="flex items-center justify-start bg-red-500">
+          <div className="flex items-center justify-start bg-green-500">
             <p className=" text-xl font-bold px-2 py-1">Posts</p>
           </div>
           <div className="flex flex-col">
             {posts.length === 0 ? (
-              <></>
+              <div className="flex justify-center items-center h-[20rem] lg:h-[28rem] md:h-[24rem] w-full">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gray-200"></div>
+              </div>
             ) : (
               posts.map(({ _id, subject, description, createdAt }) => (
                 <Post

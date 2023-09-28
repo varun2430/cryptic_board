@@ -1,8 +1,9 @@
 import express from "express";
-import { getReplys, postReply } from "../controllers/reply.js";
+import { getReplys, getStats, postReply } from "../controllers/reply.js";
 
 const router = express.Router();
 
+router.get("/stats", getStats);
 router.get("/:postId", getReplys);
 router.post("/", postReply);
 

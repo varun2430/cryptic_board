@@ -1,5 +1,10 @@
 import axios from "axios";
 
+export const getPostStats = async () => {
+  const res = await axios.get("http://localhost:5000/api/post/stats");
+  return res.data;
+};
+
 export const getPosts = async (topic = "") => {
   const url = topic
     ? `http://localhost:5000/api/post/${topic.replace(/ /g, "_")}/`

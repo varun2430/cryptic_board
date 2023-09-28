@@ -44,28 +44,32 @@ const Post = (props) => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className=" flex flex-col items-center justify-center rounded bg-slate-800 h-full m-2">
+    <div className=" flex flex-col items-center justify-center rounded bg-zinc-700 h-full m-2">
       <div className=" flex flex-row justify-between px-2 pt-1 w-full">
-        <p className=" text-sm font-bold text-gray-500">anonymous</p>
-        <p className=" text-sm font-bold text-gray-500">
+        <p className=" text-sm font-bold text-gray-400">anonymous</p>
+        <p className=" text-sm font-bold text-gray-400">
           {dtObj.toLocaleString()}
         </p>
       </div>
       <div className=" flex items-center justify-start px-2 pb-1 w-full">
         <p className=" text-lg font-bold text-white">{props.subject}</p>
       </div>
-      {imgUrl && (
+      {imgUrl === null ? (
+        <div className="flex justify-center items-center h-48 md:h-64">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gray-200"></div>
+        </div>
+      ) : (
         <img
           src={`${imgUrl}`}
           alt="post img"
           className=" h-48 md:h-64 w-full object-contain px-1 "
         />
       )}
-      <div className=" flex items-center justify-center text-justify w-full p-1">
+      <div className=" flex items-center justify-center text-justify w-full py-1 px-2">
         <p className=" text-md text-white w-full">{props.description}</p>
       </div>
       <div
-        className=" flex items-center justify-start w-full p-1 hover:bg-gray-500"
+        className=" flex items-center justify-start w-full p-1 hover:bg-zinc-600 rounded-b"
         onClick={(e) => {
           setHideReplys(!hideReplys);
         }}
@@ -78,7 +82,7 @@ const Post = (props) => {
         <p className=" text-md text-white ml-1">{replys.length} Replies</p>
       </div>
       {!hideReplys && (
-        <div className=" flex flex-col items-center justify-center bg-gray-900 w-full px-3 pb-1">
+        <div className=" flex flex-col items-center justify-center bg-zinc-700 w-full px-3 pb-1">
           <div className=" w-full">
             <form className=" pt-2 pb-2">
               <div className="mb-2">

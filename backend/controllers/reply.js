@@ -1,6 +1,15 @@
 import Post from "../models/Post.js";
 import Reply from "../models/Reply.js";
 
+export const getStats = async (req, res) => {
+  try {
+    const count = await Reply.countDocuments();
+    res.status(200).json({ count: count });
+  } catch (err) {
+    res.status(409).json({ error: err.message });
+  }
+};
+
 /* GET REPLYS */
 export const getReplys = async (req, res) => {
   try {

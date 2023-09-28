@@ -4,6 +4,15 @@ import { PutObjectCommand } from "@aws-sdk/client-s3";
 import Post from "../models/Post.js";
 import File from "../models/File.js";
 
+export const getStats = async (req, res) => {
+  try {
+    const count = await Post.countDocuments();
+    res.status(200).json({ count: count });
+  } catch (err) {
+    res.status(409).json({ error: err.message });
+  }
+};
+
 /* GET POSTS */
 export const getPosts = async (req, res) => {
   try {

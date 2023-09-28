@@ -33,7 +33,7 @@ const upload = multer({
 });
 
 /* ROUTES WITH FILES */
-app.post("/api/post", upload.single("file"), postPost);
+app.post("/api/post/", upload.single("file"), postPost);
 
 /* ROUTES */
 app.use("/api/post", postRoutes);
