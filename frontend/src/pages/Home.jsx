@@ -37,7 +37,7 @@ const topics = [
 ];
 
 const Home = () => {
-  const [homePosts, sethomePosts] = useState([]);
+  const [homePosts, sethomePosts] = useState(null);
   const [contentSize, setContentSize] = useState("0 B");
   const [postsCount, setPostsCount] = useState(0);
   const [replysCount, setReplyssCount] = useState(0);
@@ -74,12 +74,12 @@ const Home = () => {
   return (
     <>
       <div className=" flex flex-col items-center justify-center lg:mx-24 mx-2">
-        <div className=" flex items-center justify-center h-32 md:w-5/6 w-full bg-zinc-800 mt-2 mb-1">
+        <div className=" flex items-center justify-center h-32 md:w-5/6 w-full bg-neutral-900 mt-2 mb-1">
           <p className=" text-5xl md:text-6xl font-bold text-white">
             Cryptic Board
           </p>
         </div>
-        <div className=" md:w-5/6 w-full bg-zinc-800 my-1">
+        <div className=" md:w-5/6 w-full bg-neutral-900 my-1">
           <div className=" flex flex-col justify-center w-full">
             <div className="flex items-center justify-start bg-green-500">
               <p className=" text-xl font-bold px-2 py-1">Topics</p>
@@ -91,30 +91,40 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className=" md:w-5/6 w-full bg-zinc-800 my-1">
+        <div className=" md:w-5/6 w-full bg-neutral-900 my-1">
           <div className=" flex flex-col justify-center w-full">
             <div className="flex items-center justify-start bg-green-500">
               <p className=" text-xl font-bold px-2 py-1">Popular Posts</p>
             </div>
-            {homePosts.length === 0 ? (
-              <div className="flex justify-center items-center h-[20rem] lg:h-[28rem] md:h-[24rem] w-full">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gray-200"></div>
-              </div>
+            {homePosts === null ? (
+              <>
+                <div className="flex justify-center items-center h-[20rem] lg:h-[28rem] md:h-[24rem] w-full">
+                  <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gray-200"></div>
+                </div>
+              </>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 place-items-center gap-4 p-2">
-                {homePosts.map(({ _id, topic, subject }) => (
-                  <HomePost
-                    key={_id}
-                    id={_id}
-                    topic={topic}
-                    subject={subject}
-                  />
-                ))}
-              </div>
+              <>
+                {homePosts.length === 0 ? (
+                  <div className="flex justify-center items-center h-[20rem] lg:h-[28rem] md:h-[24rem] w-full">
+                    <p className=" text-4xl">🕸️</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 place-items-center gap-4 p-2">
+                    {homePosts.map(({ _id, topic, subject }) => (
+                      <HomePost
+                        key={_id}
+                        id={_id}
+                        topic={topic}
+                        subject={subject}
+                      />
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
-        <div className=" md:w-5/6 w-full bg-zinc-800 mt-1 mb-2">
+        <div className=" md:w-5/6 w-full bg-neutral-900 mt-1 mb-2">
           <div className=" flex flex-col justify-center w-full">
             <div className="flex items-center justify-start bg-green-500">
               <p className=" text-xl font-bold px-2 py-1">Stats</p>
