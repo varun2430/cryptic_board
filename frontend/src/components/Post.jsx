@@ -7,7 +7,7 @@ const Post = (props) => {
   const dtObj = new Date(props.createdAt);
   const [imgUrl, setImgUrl] = useState(null);
   const [hideReplys, setHideReplys] = useState(true);
-  const [replys, setReplys] = useState([]);
+  const [replys, setReplys] = useState(null);
   const [reply, setReply] = useState("");
   const [errors, setErrors] = useState({});
 
@@ -22,11 +22,10 @@ const Post = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validateForm();
-
     if (Object.keys(errors).length === 0) {
       try {
         const resData = await uploadReply(props.id, reply);
-        setReplys([...replys, resData]);
+        setReplys([resData, ...replys]);
         setErrors({});
         setReply("");
       } catch (error) {
@@ -49,7 +48,13 @@ const Post = (props) => {
   const getPostReplys = async () => {
     try {
       const resData = await getReplys(props.id);
-      setReplys(resData);
+      setReplys(
+        resData.sort((a, b) => {
+          const dateA = new Date(a.createdAt);
+          const dateB = new Date(b.createdAt);
+          return dateB - dateA;
+        })
+      );
     } catch (error) {
       console.error("Error fetching replys:", error);
     }
@@ -57,7 +62,7 @@ const Post = (props) => {
 
   useEffect(() => {
     getImgUrl();
-    getPostReplys();
+    // getPostReplys();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -88,6 +93,7 @@ const Post = (props) => {
       <div
         className=" flex items-center justify-start w-full p-1 hover:bg-neutral-700 rounded-b"
         onClick={(e) => {
+          getPostReplys();
           setHideReplys(!hideReplys);
         }}
       >
@@ -97,7 +103,7 @@ const Post = (props) => {
           <i className="fa-solid fa-caret-up text-white pl-1"></i>
         )}
         <p className=" text-md text-white ml-1">
-          &nbsp;{replys.length} Replies
+          &nbsp;{replys === null ? props.replyCount : replys.length} Replies
         </p>
       </div>
       {!hideReplys && (
@@ -141,12 +147,29 @@ const Post = (props) => {
               </div>
             </form>
           </div>
-          {replys.length === 0 ? (
-            <></>
+          {replys === null ? (
+            <>
+              <div className="flex justify-center items-center h-[8rem] w-full">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-200"></div>
+              </div>
+            </>
           ) : (
-            replys.map(({ _id, reply, createdAt }) => (
-              <Reply key={_id} id={_id} reply={reply} createdAt={createdAt} />
-            ))
+            <>
+              {replys.length === 0 ? (
+                <div className="flex justify-center items-center h-[10rem] w-full">
+                  <p className=" text-4xl">🕸️</p>
+                </div>
+              ) : (
+                replys.map(({ _id, reply, createdAt }) => (
+                  <Reply
+                    key={_id}
+                    id={_id}
+                    reply={reply}
+                    createdAt={createdAt}
+                  />
+                ))
+              )}
+            </>
           )}
         </div>
       )}

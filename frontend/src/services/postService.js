@@ -1,15 +1,26 @@
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL;
+const API_KEY = import.meta.env.VITE_API_KEY;
+
 export const getPostStats = async () => {
-  const res = await axios.get("http://localhost:5000/api/post/stats");
+  const res = await axios.get(`${API_URL}/api/post/stats`, {
+    headers: {
+      "api-key": API_KEY,
+    },
+  });
   return res.data;
 };
 
 export const getPosts = async (topic = "") => {
   const url = topic
-    ? `http://localhost:5000/api/post/${topic.replace(/ /g, "_")}/`
-    : "http://localhost:5000/api/post/";
-  const res = await axios.get(url);
+    ? `${API_URL}/api/post/${topic.replace(/ /g, "_")}/`
+    : `${API_URL}/api/post/`;
+  const res = await axios.get(url, {
+    headers: {
+      "api-key": API_KEY,
+    },
+  });
   return res.data;
 };
 
@@ -20,8 +31,9 @@ export const uploadPost = async (topic, subject, description, file) => {
   formData.append("description", description);
   formData.append("file", file);
 
-  const res = await axios.post("http://localhost:5000/api/post/", formData, {
+  const res = await axios.post(`${API_URL}/api/post/`, formData, {
     headers: {
+      "api-key": API_KEY,
       "Content-Type": "multipart/form-data",
     },
   });

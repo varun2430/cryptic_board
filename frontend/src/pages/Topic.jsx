@@ -13,6 +13,7 @@ const Topic = () => {
   const fileInputRef = useRef(null);
   const { topic } = useParams();
   const [posts, setPosts] = useState(null);
+  const [sortBy, setSortBy] = useState("replyCount");
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState({});
 
@@ -42,7 +43,6 @@ const Topic = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validateForm();
-
     if (Object.keys(errors).length === 0) {
       try {
         const resData = await uploadPost(
@@ -51,14 +51,14 @@ const Topic = () => {
           formData.description,
           formData.file
         );
-        setPosts([...posts, resData]);
+        setPosts([resData, ...posts]);
         setFormData(initialFormState);
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
         }
         setErrors({});
       } catch (error) {
-        console.error("Error uploading file:", error);
+        console.error("Error uploading post:", error);
       }
     } else {
       setErrors(errors);
@@ -68,7 +68,17 @@ const Topic = () => {
   const getTopicPosts = async () => {
     try {
       const resData = await getPosts(topic);
-      setPosts(resData);
+      setPosts(
+        resData.sort((a, b) => {
+          if (b.replyCount !== a.replyCount) {
+            return b.replyCount - a.replyCount;
+          } else {
+            const dateA = new Date(a.createdAt);
+            const dateB = new Date(b.createdAt);
+            return dateB - dateA;
+          }
+        })
+      );
     } catch (error) {
       console.error("Error fetching posts:", error);
     }
@@ -87,7 +97,7 @@ const Topic = () => {
       </div>
       <div className=" md:w-5/6 w-full bg-neutral-900 my-1">
         <div className=" flex flex-col justify-center w-full">
-          <div className="flex items-center justify-start bg-green-500">
+          <div className="flex items-center justify-start bg-gradient-to-r from-[#2C3E50] to-[#000000]">
             <p className=" text-xl font-bold px-2 py-1">New Post</p>
           </div>
           <div className=" w-full">
@@ -175,8 +185,45 @@ const Topic = () => {
       </div>
       <div className=" md:w-5/6 w-full bg-neutral-900 mt-1 mb-2">
         <div className=" flex flex-col justify-center w-full">
-          <div className="flex items-center justify-start bg-green-500">
-            <p className=" text-xl font-bold px-2 py-1">Posts</p>
+          <div className="flex flex-row items-center justify-between px-2 bg-gradient-to-r from-[#2C3E50] to-[#000000]">
+            <p className=" text-xl font-bold">Posts</p>
+            <div className="flex flex-row items-center justify-center">
+              <p className=" px-1 py-1">Sort By:</p>
+              <div
+                className={`flex flex-row px-2 items-center justify-center ${
+                  sortBy === "replyCount" ? "text-red-500" : "text-white"
+                } hover:cursor-pointer hover:bg-neutral-700 rounded`}
+                onClick={(e) => {
+                  setSortBy("replyCount");
+                  setPosts(
+                    [...posts].sort((a, b) => {
+                      return b.replyCount - a.replyCount;
+                    })
+                  );
+                }}
+              >
+                <i className="fa-solid fa-fire"></i>
+                <p className="font-bold pl-2">Top</p>
+              </div>
+              <div
+                className={`flex flex-row px-2 items-center justify-center ${
+                  sortBy === "createdAt" ? "text-red-500" : "text-white"
+                } hover:cursor-pointer hover:bg-neutral-700 rounded`}
+                onClick={(e) => {
+                  setSortBy("createdAt");
+                  setPosts(
+                    [...posts].sort((a, b) => {
+                      const dateA = new Date(a.createdAt);
+                      const dateB = new Date(b.createdAt);
+                      return dateB - dateA;
+                    })
+                  );
+                }}
+              >
+                <i className="fa-solid fa-calendar-days"></i>
+                <p className="font-bold pl-2">New</p>
+              </div>
+            </div>
           </div>
           <div className="flex flex-col">
             {posts === null ? (
@@ -192,15 +239,18 @@ const Topic = () => {
                     <p className=" text-4xl">🕸️</p>
                   </div>
                 ) : (
-                  posts.map(({ _id, subject, description, createdAt }) => (
-                    <Post
-                      key={_id}
-                      id={_id}
-                      subject={subject}
-                      description={description}
-                      createdAt={createdAt}
-                    />
-                  ))
+                  posts.map(
+                    ({ _id, subject, description, replyCount, createdAt }) => (
+                      <Post
+                        key={_id}
+                        id={_id}
+                        subject={subject}
+                        description={description}
+                        replyCount={replyCount}
+                        createdAt={createdAt}
+                      />
+                    )
+                  )
                 )}
               </>
             )}

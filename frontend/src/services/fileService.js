@@ -1,5 +1,8 @@
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL;
+const API_KEY = import.meta.env.VITE_API_KEY;
+
 export const compressFile = async (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -54,11 +57,19 @@ export const compressFile = async (file) => {
 };
 
 export const getFileStats = async () => {
-  const res = await axios.get("http://localhost:5000/api/file/stats");
+  const res = await axios.get(`${API_URL}/api/file/stats`, {
+    headers: {
+      "api-key": API_KEY,
+    },
+  });
   return res.data;
 };
 
 export const getObjectUrl = async (id) => {
-  const res = await axios.get(`http://localhost:5000/api/file/${id}`);
+  const res = await axios.get(`${API_URL}/api/file/${id}`, {
+    headers: {
+      "api-key": API_KEY,
+    },
+  });
   return res.data.url;
 };

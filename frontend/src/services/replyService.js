@@ -1,12 +1,23 @@
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL;
+const API_KEY = import.meta.env.VITE_API_KEY;
+
 export const getReplyStats = async () => {
-  const res = await axios.get("http://localhost:5000/api/reply/stats");
+  const res = await axios.get(`${API_URL}/api/reply/stats`, {
+    headers: {
+      "api-key": API_KEY,
+    },
+  });
   return res.data;
 };
 
 export const getReplys = async (id) => {
-  const res = await axios.get(`http://localhost:5000/api/reply/${id}`);
+  const res = await axios.get(`${API_URL}/api/reply/${id}`, {
+    headers: {
+      "api-key": API_KEY,
+    },
+  });
   return res.data;
 };
 
@@ -15,8 +26,9 @@ export const uploadReply = async (id, reply) => {
     postId: id,
     reply: reply,
   };
-  const res = await axios.post("http://localhost:5000/api/reply", data, {
+  const res = await axios.post(`${API_URL}/api/reply `, data, {
     headers: {
+      "api-key": API_KEY,
       "Content-Type": "application/json",
     },
   });

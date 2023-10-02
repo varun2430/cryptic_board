@@ -6,7 +6,7 @@ export const getStats = async (req, res) => {
     const count = await Reply.countDocuments();
     res.status(200).json({ count: count });
   } catch (err) {
-    res.status(409).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -14,10 +14,14 @@ export const getStats = async (req, res) => {
 export const getReplys = async (req, res) => {
   try {
     const { postId } = req.params;
-    const response = await Reply.find({ postId: postId });
-    res.status(200).json(response);
+    try {
+      const response = await Reply.find({ postId: postId });
+      res.status(200).json(response);
+    } catch (err) {
+      res.status(409).json({ error: err.message });
+    }
   } catch (err) {
-    res.status(409).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 };
 
@@ -25,17 +29,21 @@ export const getReplys = async (req, res) => {
 export const postReply = async (req, res) => {
   try {
     const { postId, reply } = req.body;
-    const updatedPost = await Post.findOneAndUpdate(
-      { _id: postId },
-      { $inc: { replyCount: 1 } }
-    );
-    const newReply = new Reply({
-      postId,
-      reply,
-    });
-    const mongoRes = await newReply.save();
-    res.status(201).json(newReply);
+    try {
+      const updatedPost = await Post.findOneAndUpdate(
+        { _id: postId },
+        { $inc: { replyCount: 1 } }
+      );
+      const newReply = new Reply({
+        postId,
+        reply,
+      });
+      const mongoRes = await newReply.save();
+      res.status(201).json(newReply);
+    } catch (err) {
+      res.status(409).json({ error: err.message });
+    }
   } catch (err) {
-    res.status(409).json({ error: err.message });
+    res.status(500).json({ error: err.message });
   }
 };

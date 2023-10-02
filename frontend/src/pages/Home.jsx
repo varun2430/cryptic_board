@@ -38,14 +38,24 @@ const topics = [
 
 const Home = () => {
   const [homePosts, sethomePosts] = useState(null);
-  const [contentSize, setContentSize] = useState("0 B");
   const [postsCount, setPostsCount] = useState(0);
   const [replysCount, setReplyssCount] = useState(0);
+  const [contentSize, setContentSize] = useState("0 B");
 
   const getHomePosts = async () => {
     try {
       const resData = await getPosts();
-      sethomePosts(resData);
+      sethomePosts(
+        resData.sort((a, b) => {
+          if (b.replyCount !== a.replyCount) {
+            return b.replyCount - a.replyCount;
+          } else {
+            const dateA = new Date(a.createdAt);
+            const dateB = new Date(b.createdAt);
+            return dateB - dateA;
+          }
+        })
+      );
     } catch (error) {
       console.error("Error fetching popular posts:", error);
     }
@@ -53,16 +63,14 @@ const Home = () => {
 
   const getStats = async () => {
     try {
-      const resFileData = await getFileStats();
-      setContentSize(resFileData.totalSize);
-
       const resPostData = await getPostStats();
       setPostsCount(resPostData.count);
-
       const resReplyData = await getReplyStats();
       setReplyssCount(resReplyData.count);
+      const resFileData = await getFileStats();
+      setContentSize(resFileData.totalSize);
     } catch (error) {
-      console.error("Error fetching file stats:", error);
+      console.error("Error fetching stats:", error);
     }
   };
 
@@ -75,13 +83,13 @@ const Home = () => {
     <>
       <div className=" flex flex-col items-center justify-center lg:mx-24 mx-2">
         <div className=" flex items-center justify-center h-32 md:w-5/6 w-full bg-neutral-900 mt-2 mb-1">
-          <p className=" text-5xl md:text-6xl font-bold text-white">
+          <p className=" text-5xl md:text-6xl font-bold bg-gradient-to-r from-orange-700 via-blue-500 to-green-500 text-transparent bg-clip-text animate-gradient">
             Cryptic Board
           </p>
         </div>
         <div className=" md:w-5/6 w-full bg-neutral-900 my-1">
           <div className=" flex flex-col justify-center w-full">
-            <div className="flex items-center justify-start bg-green-500">
+            <div className="flex items-center justify-start bg-gradient-to-r from-[#2C3E50] to-[#000000]">
               <p className=" text-xl font-bold px-2 py-1">Topics</p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 px-2 pt-1 pb-1">
@@ -93,7 +101,7 @@ const Home = () => {
         </div>
         <div className=" md:w-5/6 w-full bg-neutral-900 my-1">
           <div className=" flex flex-col justify-center w-full">
-            <div className="flex items-center justify-start bg-green-500">
+            <div className="flex items-center justify-start bg-gradient-to-r from-[#2C3E50] to-[#000000]">
               <p className=" text-xl font-bold px-2 py-1">Popular Posts</p>
             </div>
             {homePosts === null ? (
@@ -126,7 +134,7 @@ const Home = () => {
         </div>
         <div className=" md:w-5/6 w-full bg-neutral-900 mt-1 mb-2">
           <div className=" flex flex-col justify-center w-full">
-            <div className="flex items-center justify-start bg-green-500">
+            <div className="flex items-center justify-start bg-gradient-to-r from-[#2C3E50] to-[#000000]">
               <p className=" text-xl font-bold px-2 py-1">Stats</p>
             </div>
             <div className="flex flex-row justify-around">
