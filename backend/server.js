@@ -1,5 +1,3 @@
-import fs from "fs";
-import https from "https";
 import express from "express";
 import { S3Client } from "@aws-sdk/client-s3";
 import mongoose from "mongoose";
@@ -19,9 +17,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors());
 
-const key = fs.readFileSync("./key.pem");
-const cert = fs.readFileSync("./cert.pem");
-
 export const s3Client = new S3Client({
   region: process.env.AWS_REGION,
   credentials: {
@@ -38,7 +33,12 @@ const upload = multer({
   },
 });
 
-/* ROUTES WITH FILES */
+/* HEALTH CHECK ENDPOINT */
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok" });
+});
+
+/* ENDPOINT WITH FILES */
 app.post("/api/post/", upload.single("file"), verifyApiKey, postPost);
 
 /* ROUTES */
@@ -46,12 +46,10 @@ app.use("/api/post", postRoutes);
 app.use("/api/file", fileRoutes);
 app.use("/api/reply", replyRoutes);
 
-const server = https.createServer({ key: key, cert: cert }, app);
-
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => {
-    server.listen(process.env.PORT, () => {
+    app.listen(process.env.PORT, () => {
       console.log(`server running on port ${process.env.PORT}`);
     });
   })
