@@ -84,11 +84,11 @@ const Post = (props) => {
         <img
           src={`${imgUrl}`}
           alt="post img"
-          className=" h-48 md:h-64 w-full object-contain px-1 "
+          className=" h-48 md:h-64 lg:h-80 w-full object-contain px-1 "
         />
       )}
       <div className=" flex items-center justify-center text-justify w-full py-1 px-2">
-        <p className=" text-md text-white w-full">{props.description}</p>
+        <p className=" text-md text-gray-300 w-full">{props.description}</p>
       </div>
       <div
         className=" flex items-center justify-start w-full p-1 hover:bg-neutral-700 rounded-b"

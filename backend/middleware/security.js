@@ -1,10 +1,8 @@
-const API_KEY = "tmp_api_key";
-
 export const verifyApiKey = async (req, res, next) => {
   try {
     const apiKey = req.headers["api-key"];
 
-    if (!apiKey || API_KEY !== apiKey) {
+    if (!apiKey || apiKey !== process.env.API_KEY) {
       return res.status(403).json({ error: "Forbidden" });
     }
 

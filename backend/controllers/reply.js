@@ -1,6 +1,7 @@
 import Post from "../models/Post.js";
 import Reply from "../models/Reply.js";
 
+/* GET REPLY STATS */
 export const getStats = async (req, res) => {
   try {
     const count = await Reply.countDocuments();
