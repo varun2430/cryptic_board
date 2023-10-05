@@ -14,8 +14,8 @@ export const getPostStats = async () => {
 
 export const getPosts = async (topic = "") => {
   const url = topic
-    ? `${API_URL}/api/post/${topic.replace(/ /g, "_")}/`
-    : `${API_URL}/api/post/`;
+    ? `${API_URL}/api/post/${topic.replace(/ /g, "_")}`
+    : `${API_URL}/api/post`;
   const res = await axios.get(url, {
     headers: {
       "api-key": API_KEY,
@@ -31,7 +31,7 @@ export const uploadPost = async (topic, subject, description, file) => {
   formData.append("description", description);
   formData.append("file", file);
 
-  const res = await axios.post(`${API_URL}/api/post/`, formData, {
+  const res = await axios.post(`${API_URL}/api/post`, formData, {
     headers: {
       "api-key": API_KEY,
       "Content-Type": "multipart/form-data",
