@@ -96,8 +96,8 @@ Ensure you have the following installed:
    ```
    Create a .env file in the frontend directory and set the required environment variables:
    ```sh
-   VITE_API_URL = ""
-   VITE_API_KEY = ""
+   VITE_API_URL=""
+   VITE_API_KEY=""
    ```
    Start the development server:
    ```sh
